@@ -3,7 +3,7 @@ spring:
     name: ai-incident-resolver
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/incidentdb
+    url: jdbc:postgresql://localhost:5432/incidentdb?options=-c%20TimeZone=Asia/Kolkata
     username: admin
     password: admin123
     driver-class-name: org.postgresql.Driver
