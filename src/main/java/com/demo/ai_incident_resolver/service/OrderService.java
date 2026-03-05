@@ -1,5 +1,6 @@
 package com.demo.ai_incident_resolver.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -20,7 +21,15 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public Optional<OrderEntity> getOrder(Long id){
+    public Optional<OrderEntity> getOrderById(Long id){
         return orderRepository.findById(id);
+    }
+
+    public List<OrderEntity> getAllOrders(){
+        return orderRepository.findAll();
+    }
+
+    public void deleteOrder(Long id){
+        orderRepository.deleteById(id);
     }
 }
