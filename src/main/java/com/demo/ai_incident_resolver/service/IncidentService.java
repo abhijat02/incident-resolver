@@ -11,13 +11,19 @@ import com.demo.ai_incident_resolver.repository.IncidentRepository;
 public class IncidentService {
 
     private final IncidentRepository incidentRepository;
+    private final AIAnalysisService aiAnalysisService;
 
-    public IncidentService(IncidentRepository incidentRepository){
+    public IncidentService(IncidentRepository incidentRepository, AIAnalysisService aiAnalysisService) {
         this.incidentRepository = incidentRepository;
+        this.aiAnalysisService = aiAnalysisService;
     }
 
     public IncidentEntity createIncident(IncidentEntity incident){
+        var analysis = aiAnalysisService.analyze(incident.getErrorMessage());
+
+        incident.setSeverity(analysis.getSeverity());
         incident.setStatus("OPEN");
+
         return incidentRepository.save(incident);
     }
 
