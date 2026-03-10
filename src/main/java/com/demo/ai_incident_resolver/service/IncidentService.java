@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.demo.ai_incident_resolver.entity.IncidentEntity;
 import com.demo.ai_incident_resolver.repository.IncidentRepository;
 
+
 @Service
 public class IncidentService {
 
@@ -18,16 +19,23 @@ public class IncidentService {
         this.aiAnalysisService = aiAnalysisService;
     }
 
-    public IncidentEntity createIncident(IncidentEntity incident){
-        var analysis = aiAnalysisService.analyze(incident.getErrorMessage());
 
-        incident.setSeverity(analysis.getSeverity());
+    public IncidentEntity createIncident(IncidentEntity incident){
+        
+        String analysis = aiAnalysisService.analyze(incident.getErrorMessage());
+
+        incident.setSeverity("AI_ANALYZED");
         incident.setStatus("OPEN");
+        incident.setRecommendation(analysis);
+
+        System.out.println("AI ANALYSIS");
+        System.out.println(analysis);
 
         return incidentRepository.save(incident);
     }
 
-    public List<IncidentEntity> getAllIncidents(){
+    public List<IncidentEntity> getAllIncidents() {
         return incidentRepository.findAll();
     }
+    
 }

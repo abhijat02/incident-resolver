@@ -1,38 +1,43 @@
 package com.demo.ai_incident_resolver.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import com.demo.ai_incident_resolver.dto.IncidentAnalysisResponse;
+import com.demo.ai_incident_resolver.dto.OllamaRequest;
+import com.demo.ai_incident_resolver.dto.OllamaResponse;
+
 
 @Service
 public class AIAnalysisService {
 
-    public IncidentAnalysisResponse analyze(String errorMessage){
+    private final RestTemplate restTemplate = new RestTemplate();
 
-        String severity;
-        String recommendation;
+    public String analyze(String errorMessage){
 
-        if(errorMessage.toLowerCase().contains("database")){
-            severity = "HIGH";
-            recommendation = "Check database connection and restart DB service";
-        }
-        else if(errorMessage.toLowerCase().contains("timeout")){
-            severity = "MEDIUM";
-            recommendation = "Check network latency or increase timeout configuration";
-        }
-        else if(errorMessage.toLowerCase().contains("null")){
-            severity = "LOW";
-            recommendation = "Check null handling in application logic";
-        }
-        else{
-            severity = "UNKNOWN";
-            recommendation = "Manual investigation required";
-        }
+        String prompt = """
+                You are a DevOps AI assistant.
+                Analyze this production error log and return:
 
-        return IncidentAnalysisResponse.builder()
-               .severity(severity)
-               .recommendation(recommendation)
-               .build();
+                1. Severity
+                2. Root Cause
+                3. Suggested Fix
+
+                Error Log:
+                """+ errorMessage;
+
+        OllamaRequest request = OllamaRequest.builder()
+                                .model("llama3")
+                                .prompt(prompt)
+                                .stream(false)
+                                .build();
+
+        OllamaResponse response = restTemplate.postForObject(
+            "http://localhost:11434/api/generate",
+            request,
+            OllamaResponse.class
+        );
+
+        return response.getResponse();
     }
 
     

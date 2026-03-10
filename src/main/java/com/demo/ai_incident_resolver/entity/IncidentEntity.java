@@ -28,4 +28,5 @@ public class IncidentEntity {
     private String errorMessage;
     private String severity;
     private String status;
+    private String recommendation;
 }
